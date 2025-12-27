@@ -1,12 +1,12 @@
 using RESTApiVerticalSlice.Common.Logging;
 using RESTApiVerticalSlice.Features.Products.Data;
-using RESTApiVerticalSlice.Features.Products.Services;
+using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<IProductRepository, InMemoryProductRepository>();
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddMediatR(typeof(Program));
 builder.Services.AddControllers();
 
 var app = builder.Build();

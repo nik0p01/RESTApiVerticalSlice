@@ -4,16 +4,20 @@ using RESTApiVerticalSlice.Features.Products.Models;
 
 namespace RESTApiVerticalSlice.Features.Products.Services.Handlers;
 
-public sealed class GetAllProductsQuery : IRequest<IEnumerable<Product>> { }
+public sealed class GetAllProductsQuery : IRequest<IEnumerable<ProductResponseDto>> { }
 
-public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<Product>>
+public class GetAllProductsHandler : IRequestHandler<GetAllProductsQuery, IEnumerable<ProductResponseDto>>
 {
-    private readonly IProductRepository _repository;
+    private readonly IProductRepository _repo;
 
     public GetAllProductsHandler(IProductRepository repo)
     {
-        _repository = repo;
+        _repo = repo;
     }
 
-    public Task<IEnumerable<Product>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken) => _repository.GetAllAsync();
+    public async Task<IEnumerable<ProductResponseDto>> Handle(GetAllProductsQuery request, CancellationToken cancellationToken)
+    {
+        var products = await _repo.GetAllAsync();
+        return products.Select(p => new ProductResponseDto(p.Id, p.Name, p.Price));
+    }
 }

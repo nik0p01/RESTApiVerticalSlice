@@ -13,10 +13,7 @@ var app = builder.Build();
 
 app.UseRequestLogging();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.MapOpenApi();
 
 app.MapGet("/", () => Results.Ok(new { Message = "REST API - Vertical Slice" }))
     .WithMetadata(new LogAttribute("Root", LogLevel.Debug));

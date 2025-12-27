@@ -15,7 +15,6 @@ public static class RequestLoggingMiddleware
                 Console.WriteLine($"[LOG - Start] [{logMeta.Level}] {logMeta.Operation} {context.Request.Method} {context.Request.Path}");
                 var sw = System.Diagnostics.Stopwatch.StartNew();
 
-                // Read request body
                 string requestBody = string.Empty;
                 try
                 {
@@ -34,7 +33,6 @@ public static class RequestLoggingMiddleware
                     Console.WriteLine($"[LOG - RequestBody] {requestBody}");
                 }
 
-                // Capture response
                 var originalBodyStream = context.Response.Body;
                 await using var responseBody = new MemoryStream();
                 context.Response.Body = responseBody;
@@ -43,7 +41,6 @@ public static class RequestLoggingMiddleware
                 {
                     await next();
 
-                    // Read response
                     context.Response.Body.Seek(0, SeekOrigin.Begin);
                     var responseText = string.Empty;
                     try
@@ -56,7 +53,6 @@ public static class RequestLoggingMiddleware
                         Console.WriteLine($"[LOG - Warning] Could not read response body: {ex.Message}");
                     }
 
-                    // Reset position and copy back to original stream
                     context.Response.Body.Seek(0, SeekOrigin.Begin);
                     await context.Response.Body.CopyToAsync(originalBodyStream);
 
@@ -72,7 +68,6 @@ public static class RequestLoggingMiddleware
                 {
                     sw.Stop();
                     Console.WriteLine($"[LOG - Error] [{logMeta.Level}] {logMeta.Operation} - {ex.Message} - Elapsed: {sw.ElapsedMilliseconds}ms");
-                    // Ensure response body is copied back on error
                     context.Response.Body = originalBodyStream;
                     throw;
                 }

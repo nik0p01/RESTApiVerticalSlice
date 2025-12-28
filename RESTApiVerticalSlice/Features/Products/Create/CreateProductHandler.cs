@@ -1,17 +1,14 @@
 using MediatR;
 
 using RESTApiVerticalSlice.Storage;
-using RESTApiVerticalSlice.Storage.Models;
+using RESTApiVerticalSlice.Storage.Domain;
 
 namespace RESTApiVerticalSlice.Features.Products.Create;
 
 public sealed class CreateProductCommand : IRequest<CreateProductResponseDto>
 {
-    public CreateProductRequestDto Dto { get; }
-    public CreateProductCommand(CreateProductRequestDto dto)
-    {
-        Dto = dto;
-    }
+    public string Name { get; set; } = string.Empty;
+    public decimal Price { get; set; }
 }
 
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, CreateProductResponseDto>
@@ -25,7 +22,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
 
     public async Task<CreateProductResponseDto> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
-        var product = new ProductEntity(Guid.NewGuid(), request.Dto.Name, request.Dto.Price);
+        var product = new Product(Guid.NewGuid(), request.Name, request.Price);
         var created = await _storage.CreateAsync(product);
         return new CreateProductResponseDto(created.Id, created.Name, created.Price);
     }

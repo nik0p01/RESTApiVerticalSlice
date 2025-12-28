@@ -19,9 +19,9 @@ public class CreateController : ControllerBase
 
     [HttpPost]
     [Log("CreateProduct", LogLevel.Warning)]
-    public async Task<IActionResult> Handle([FromBody] CreateProductRequestDto dto)
+    public async Task<IActionResult> Handle([FromBody] CreateProductCommand command)
     {
-        var created = await _mediator.Send(new CreateProductCommand(dto));
+        var created = await _mediator.Send(command);
         return Created($"/api/products/{created.Id}", created);
     }
 }

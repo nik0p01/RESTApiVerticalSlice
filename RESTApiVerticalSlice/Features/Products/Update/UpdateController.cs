@@ -19,9 +19,10 @@ public class UpdateController : ControllerBase
 
     [HttpPut("{id}")]
     [Log("UpdateProduct", LogLevel.Warning)]
-    public async Task<IActionResult> Handle(Guid id, [FromBody] UpdateProductRequestDto dto)
+    public async Task<IActionResult> Handle(Guid id, [FromBody] UpdateProductCommand dto)
     {
-        var updated = await _mediator.Send(new UpdateProductCommand(id, dto));
+        var command = new UpdateProductCommand(id, dto.Name, dto.Price);
+        var updated = await _mediator.Send(command);
         return updated ? NoContent() : NotFound();
     }
 }

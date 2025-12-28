@@ -1,18 +1,23 @@
 using MediatR;
 
 using RESTApiVerticalSlice.Storage;
-using RESTApiVerticalSlice.Storage.Models;
+using RESTApiVerticalSlice.Storage.Domain;
 
 namespace RESTApiVerticalSlice.Features.Products.Update;
 
 public sealed class UpdateProductCommand : IRequest<bool>
 {
-    public Guid Id { get; }
-    public UpdateProductRequestDto Dto { get; }
-    public UpdateProductCommand(Guid id, UpdateProductRequestDto dto)
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public decimal Price { get; init; }
+
+    public UpdateProductCommand() { }
+
+    public UpdateProductCommand(Guid id, string name, decimal price)
     {
         Id = id;
-        Dto = dto;
+        Name = name;
+        Price = price;
     }
 }
 
@@ -26,7 +31,7 @@ public class UpdateProductHandler : IRequestHandler<UpdateProductCommand, bool>
 
     public Task<bool> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var product = new ProductEntity(request.Id, request.Dto.Name, request.Dto.Price);
+        var product = new Product(request.Id, request.Name, request.Price);
         return _storage.UpdateAsync(product);
     }
 }
